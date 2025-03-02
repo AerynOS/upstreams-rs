@@ -21,7 +21,7 @@ fn configure_tracing() -> color_eyre::Result<()> {
         .with_target(true)
         .with_thread_ids(false);
 
-    let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("trace"));
+    let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
     tracing_subscriber::registry()
         .with(filter)
         .with(tracing_subscriber::fmt::layer().event_format(f))
