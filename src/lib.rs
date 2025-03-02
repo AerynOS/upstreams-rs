@@ -6,6 +6,7 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 
 pub mod host;
+pub mod versioning;
 
 /// Metadata about a specific version of the software
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Serialize)]

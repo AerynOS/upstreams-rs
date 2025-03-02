@@ -1543,6 +1543,7 @@ dependencies = [
  "chrono",
  "color-eyre",
  "colored_json",
+ "regex",
  "reqwest",
  "serde",
  "serde_json",
