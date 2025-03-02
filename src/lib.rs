@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
+use chrono::{DateTime, Utc};
 use serde::Serialize;
 
 pub mod host;
@@ -11,6 +12,7 @@ pub struct VersionMetadata {
     pub version: String,
     pub downloads: Vec<VersionedAsset>,
     pub release_notes: Option<String>,
+    pub released_at: Option<DateTime<Utc>>,
 }
 
 /// Represents some discovered release asset.
@@ -23,6 +25,12 @@ pub struct VersionedAsset {
 
     /// The type of asset.
     pub kind: AssetKind,
+
+    /// When the asset was released.
+    pub released_at: Option<DateTime<Utc>>,
+
+    /// When the asset was last updated.
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Serialize)]
