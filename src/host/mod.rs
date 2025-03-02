@@ -12,6 +12,7 @@ use async_trait::async_trait;
 use crate::VersionMetadata;
 
 pub mod github;
+pub mod gnome;
 pub mod plain;
 
 /// Common trait implemented by all repository host types
@@ -56,6 +57,7 @@ pub enum HostError {
 pub fn from_url(url: &Url) -> Result<Box<dyn Host>, HostError> {
     match url.host_str() {
         Some("github.com") => Ok(Box::new(GithubHost::from_url(url)?)),
+        Some("download.gnome.org") => Ok(Box::new(gnome::GnomeHost::from_url(url)?)),
         _ => Ok(Box::new(PlainHost::from_url(url))),
     }
 }
