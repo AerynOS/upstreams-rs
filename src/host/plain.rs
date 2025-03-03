@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MPL-2.0
 
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 
 use async_trait::async_trait;
 use url::Url;
@@ -89,7 +89,7 @@ impl Host for PlainHost {
         for element in doc.select(&selector) {
             let href = element.value().attr("href").unwrap_or_default();
 
-            let mut downloads = vec![];
+            let mut downloads = BTreeSet::new();
             if let Ok(m) = matcher.extract(href) {
                 if m.name == match_us.name {
                     // Construct full URL
@@ -97,14 +97,14 @@ impl Host for PlainHost {
                         href.to_string()
                     } else {
                         format!(
-                            "{}{}/{}",
+                            "{}/{}/{}",
                             self.url.host().map(|s| s.to_string()).unwrap_or_default(),
                             self.directory,
                             href.trim_start_matches('.')
                         )
                     };
 
-                    downloads.push(VersionedAsset {
+                    downloads.insert(VersionedAsset {
                         url: full_url,
                         kind: AssetKind::Release,
                         released_at: None,
@@ -113,7 +113,7 @@ impl Host for PlainHost {
 
                     versions
                         .entry(m.version)
-                        .or_insert_with(Vec::new)
+                        .or_insert_with(BTreeSet::new)
                         .extend(downloads);
                 }
             }
@@ -123,7 +123,7 @@ impl Host for PlainHost {
         for (version, downloads) in versions.iter() {
             let metadata = VersionMetadata {
                 version: version.to_string(),
-                downloads: downloads.clone(),
+                downloads: downloads.iter().cloned().collect(),
                 release_notes: None,
                 released_at: None,
             };

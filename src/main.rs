@@ -6,7 +6,7 @@ use tracing_error::ErrorLayer;
 use tracing_subscriber::{
     fmt::format::Format, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter,
 };
-use upstreams_rs::host;
+use upstreams_rs::{host, versioning::VersionExtractor};
 
 /// Configures the tracing infrastructure with appropriate formatting and filtering
 ///
@@ -35,7 +35,11 @@ fn configure_tracing() -> color_eyre::Result<()> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     configure_tracing()?;
     let args: Vec<String> = std::env::args().skip(1).collect();
+    let ext = VersionExtractor::new()?;
     for arg in args {
+        let version = ext.extract(&arg)?;
+        eprintln!("name = {}, version = {}", version.name, version.version);
+
         let url = url::Url::parse(&arg)?;
         let host = host::from_url(&url)?;
         let versions = host.versions().await?;
