@@ -35,7 +35,7 @@ fn configure_tracing() -> color_eyre::Result<()> {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     configure_tracing()?;
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let ext = VersionExtractor::new()?;
+    let ext = VersionExtractor::new();
     for arg in args {
         let version = ext.extract(&arg)?;
         eprintln!("name = {}, version = {}", version.name, version.version);

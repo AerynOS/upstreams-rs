@@ -80,7 +80,7 @@ impl Host for PlainHost {
         let selector =
             scraper::Selector::parse("a").map_err(|e| HostError::ParseError(e.to_string()))?;
 
-        let matcher = VersionExtractor::new().map_err(|e| HostError::ParseError(e.to_string()))?;
+        let matcher = VersionExtractor::new();
         let match_us = matcher
             .extract(self.url.as_ref())
             .map_err(|e| HostError::ParseError(e.to_string()))?;
