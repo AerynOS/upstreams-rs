@@ -78,12 +78,12 @@ pub enum VersionError {
 
 impl VersionExtractor {
     /// Creates a new version extractor with default patterns
-    pub fn new() -> Result<Self, VersionError> {
+    pub fn new() -> Self {
         let mut extractor = Self {
             patterns: Vec::with_capacity(5),
         };
-        extractor.add_default_patterns()?;
-        Ok(extractor)
+        extractor.add_default_patterns();
+        extractor
     }
 
     /// Adds a custom pattern to the extractor
@@ -95,7 +95,7 @@ impl VersionExtractor {
     }
 
     /// Initialize with default known patterns
-    fn add_default_patterns(&mut self) -> Result<(), VersionError> {
+    fn add_default_patterns(&mut self) {
         let patterns = vec![
             VersionPattern::new(
                 VersionStyle::DateBased,
@@ -106,7 +106,8 @@ impl VersionExtractor {
                     (?:\.(?:tar(?:\.[^/]*)?|zip|tgz))?$
                 ",
                 5,
-            )?,
+            )
+            .unwrap(),
             VersionPattern::new(
                 VersionStyle::Semver,
                 r"(?x)
@@ -118,7 +119,8 @@ impl VersionExtractor {
                     (?:\.(?:tar(?:\.[^/]*)?|zip|tgz))?$
                 ",
                 10,
-            )?,
+            )
+            .unwrap(),
             VersionPattern::new(
                 VersionStyle::DateBased,
                 r"(?x)
@@ -129,7 +131,8 @@ impl VersionExtractor {
                     (?:\.(?:tar(?:\.[^/]*)?|zip|tgz))?$
                 ",
                 25,
-            )?,
+            )
+            .unwrap(),
             VersionPattern::new(
                 VersionStyle::Simple,
                 r"(?x)
@@ -139,7 +142,8 @@ impl VersionExtractor {
                     (?:\.(?:tar(?:\.[^/]*)?|zip|tgz))?$
                 ",
                 30,
-            )?,
+            )
+            .unwrap(),
             VersionPattern::new(
                 VersionStyle::Simple,
                 r"(?x)
@@ -149,7 +153,8 @@ impl VersionExtractor {
                     (?:\.(?:tar(?:\.[^/]*)?|zip|tgz))?$
                 ",
                 35,
-            )?,
+            )
+            .unwrap(),
             VersionPattern::new(
                 VersionStyle::Simple,
                 r"(?x)
@@ -159,13 +164,12 @@ impl VersionExtractor {
                     (?:\.(?:tar(?:\.[^/]*)?|zip|tgz)|\.[\w]+)?$
                 ",
                 100,
-            )?,
+            )
+            .unwrap(),
         ];
 
         self.patterns = patterns;
         self.patterns.sort_by_key(|p| p.priority);
-
-        Ok(())
     }
 
     /// Extracts version and name information from a path or URL
@@ -326,7 +330,7 @@ mod tests {
         )
         ];
 
-        let extractor = VersionExtractor::new().expect("Failed to create extractor");
+        let extractor = VersionExtractor::new();
         for (path, expected) in known_good {
             eprintln!("Testing path: {}", path);
             let result = extractor.extract(path).expect("Failed to extract version");
